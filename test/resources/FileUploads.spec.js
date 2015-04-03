@@ -2,7 +2,7 @@
 
 var stripe = require('../testUtils').getSpyableStripe();
 var expect = require('chai').expect;
-var when = require('when');
+var Promise = require('bluebird');
 var fs = require('fs');
 var path = require('path');
 
@@ -18,6 +18,7 @@ describe('File Uploads Resource', function() {
       expect(stripe.LAST_REQUEST).to.deep.equal({
         method: 'GET',
         url: '/v1/files/fil_12345',
+        headers: {},
         data: {}
       });
 
@@ -29,10 +30,25 @@ describe('File Uploads Resource', function() {
       expect(stripe.LAST_REQUEST).to.deep.equal({
         method: 'GET',
         url: '/v1/files/fil_12345',
+        headers: {},
         data: {},
         auth: TEST_AUTH_KEY
       });
 
+    });
+
+  });
+
+  describe('list', function() {
+
+    it ('Sends the correct request', function() {
+      stripe.fileUploads.list();
+      expect(stripe.LAST_REQUEST).to.deep.equal({
+        method: 'GET',
+        url: '/v1/files',
+        headers: {},
+        data: {},
+      });
     });
 
   });

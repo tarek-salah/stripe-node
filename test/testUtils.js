@@ -2,11 +2,9 @@
 
 // NOTE: testUtils should be require'd before anything else in each spec file!
 
+require('mocha');
 // Ensure we are using the 'as promised' libs before any tests are run:
-require('mocha-as-promised')();
 require('chai').use(require('chai-as-promised'));
-
-var when = require('when');
 
 var utils = module.exports = {
 
@@ -35,7 +33,8 @@ var utils = module.exports = {
           var req = stripeInstance.LAST_REQUEST = {
             method: method,
             url: url,
-            data: data
+            data: data,
+            headers: options.headers || {},
           };
           if (auth) req.auth = auth;
           stripeInstance.REQUESTS.push(req);

@@ -67,7 +67,7 @@ stripe.customers.create({
   * [`list([params])`](https://stripe.com/docs/api/node#list_charges)
   * [`retrieve(chargeId)`](https://stripe.com/docs/api/node#retrieve_charge)
   * [`capture(chargeId[, params])`](https://stripe.com/docs/api/node#charge_capture)
-  * [`refund(chargeId[, params])`](https://stripe.com/docs/api/node#refund_charge)
+  * [`refund(chargeId[, params])`](https://stripe.com/docs/api/node#create_refund)
   * [`update(chargeId[, params])`](https://stripe.com/docs/api/node#update_charge)
   * [`updateDispute(chargeId[, params])`](https://stripe.com/docs/api/node#update_dispute)
   * [`closeDispute(chargeId[, params])`](https://stripe.com/docs/api/node#close_dispute)
@@ -140,11 +140,17 @@ stripe.customers.create({
   * [`list([params])`](https://stripe.com/docs/api/node#list_transfers)
   * [`retrieve(transferId)`](https://stripe.com/docs/api/node#retrieve_transfer)
   * [`update(transferId[, params])`](https://stripe.com/docs/api/node#update_transfer)
-  * [`cancel(transferId)`](https://stripe.com/docs/api/node#cancel_transfer)
+  * [`reverse(transferId[, params])`](https://stripe.com/docs/api/node#create_transfer_reversal)
+  * `cancel(transferId)` (Deprecated -- use `reverse`)
   * [`listTransactions(transferId[, params])`](https://stripe.com/docs/api/curl#list_transfers)
   * `setMetadata(transferId, metadataObject)` ([metadata info](https://stripe.com/docs/api/node#metadata))
   * `setMetadata(transferId, key, value)`
   * `getMetadata(transferId)`
+ * bitcoinReceivers
+  * [`create(params)`](https://stripe.com/docs/api/node#create_bitcoin_receiver)
+  * [`retrieve(receiverId)`](https://stripe.com/docs/api/node#retrieve_bitcoin_receiver)
+  * [`list([params])`](https://stripe.com/docs/api/node#list_bitcoin_receivers)
+  * `getMetadata(receiverId)`
 
 ## Configuration
 

@@ -2,7 +2,7 @@
 
 var testUtils = require('./testUtils');
 var chai = require('chai');
-var when = require('when');
+var Promise = require('bluebird');
 var stripe = require('../lib/stripe')(
   testUtils.getUserStripeKey(),
   'latest'
@@ -29,24 +29,6 @@ describe('Flows', function() {
   var cleanup = new testUtils.CleanupUtility();
   this.timeout(30000);
 
-  describe('Using revoked.stripe.com', function() {
-
-    before(function() {
-      stripe.setHost('revoked.stripe.com', 444);
-    });
-
-    after(function() {
-      stripe.setHost('api.stripe.com', 443);
-    });
-
-    it('Throws "revoked ssl cert" correctly', function() {
-      return expect(
-        stripe.account.retrieve()
-      ).to.eventually.be.rejectedWith('Revoked SSL Certificate');
-    });
-
-  });
-
   it('Allows me to retrieve default_currency', function() {
     return expect(
       stripe.account.retrieve()
@@ -62,7 +44,7 @@ describe('Flows', function() {
     it('Allows me to: Create a plan and subscribe a customer to it', function() {
 
       return expect(
-        when.join(
+        Promise.join(
           stripe.plans.create({
             id: 'plan' + +new Date,
             amount: 1700,
@@ -91,7 +73,7 @@ describe('Flows', function() {
     it('Allows me to: Create a plan and subscribe a customer to it, and update subscription (multi-subs API)', function() {
       var plan;
       return expect(
-        when.join(
+        Promise.join(
           stripe.plans.create({
             id: 'plan' + +new Date,
             amount: 1700,
@@ -149,7 +131,7 @@ describe('Flows', function() {
     it('Allows me to: subscribe then cancel with `at_period_end` defined', function() {
 
       return expect(
-        when.join(
+        Promise.join(
           stripe.plans.create({
             id: 'plan' + +new Date,
             amount: 1700,
@@ -214,7 +196,7 @@ describe('Flows', function() {
     describe('When I create a coupon & customer', function() {
       it('Does so', function() {
         return expect(
-          when.join(
+          Promise.join(
             stripe.coupons.create({
               percent_off: 20,
               duration: 'once'
@@ -384,24 +366,25 @@ describe('Flows', function() {
         ).to.eventually.have.deep.property('customer.created');
       });
     });
-    describe('A customer\'s default card', function() {
-      it('Allows you to expand a default_card', function() {
+    describe('A customer\'s default source', function() {
+      it('Allows you to expand a default_source', function() {
         return expect(
           stripe.customers.create({
             description: 'Some customer',
-            card: {
+            source: {
+              object: 'card',
               number: '4242424242424242',
               exp_month: 12,
               exp_year: 2015
             },
-            expand: ['default_card']
+            expand: ['default_source']
           })
             .then(function(cust) {
               cleanup.deleteCustomer(cust.id);
               return cust;
             })
         // Confirm it's expanded by checking that some prop (e.g. exp_year) exists:
-        ).to.eventually.have.deep.property('default_card.exp_year');
+        ).to.eventually.have.deep.property('default_source.exp_year');
       });
     });
   });
@@ -463,10 +446,10 @@ describe('Flows', function() {
             invoiceItemId = ii.id
             cleanup.deleteInvoiceItem(ii.id);
 
-            var deferred = when.defer();
+            var deferred = Promise.defer();
 
             // Return found invoiceItem description for two searches:
-            return when.join(
+            return Promise.join(
               // This search should give us our invoice-item:
               stripe.invoiceItems.list({
                 created: {
